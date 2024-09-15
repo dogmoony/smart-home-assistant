@@ -1,0 +1,39 @@
+{
+    "_comment": "This is the structure of the data payloads for each event type",
+    "event1": {
+        "eventType": "sensorReading",
+        "data": {
+            "deviceID": "sensor1",
+            "sensorType": "Temperature",
+            "value": 72,
+            "unit": "Fahrenheit",
+            "timestamp": "2024-09-15T12:30:00Z"
+        }
+    },
+    "event2": {
+        "eventType": "deviceStatusChange",
+        "data": {
+            "deviceID": "sensor1",
+            "status": "ON",
+            "timestamp": "2024-09-15T12:30:00Z"
+        }
+    },
+    "event3": {
+        "eventType": "userCommand",
+        "data": {
+            "deviceID": "sensor1",
+            "userID": "john52",
+            "command": "turnLightON",
+            "timestamp": "2024-09-15T12:30:00Z"
+        }
+    },
+    "event4": {
+        "eventType": "ErrorEvent",
+        "data": {
+            "deviceID": "sensor1",
+            "command": "turnLightON",
+            "errorType": "Device is not connected",
+            "timestamp": "2024-09-15T12:30:00Z"
+        }
+    }
+}
