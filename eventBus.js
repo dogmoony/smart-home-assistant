@@ -29,26 +29,70 @@ class Subscriber {
   }
 }
 
-// The EventBus Class - Manages publishing and subscribing to events
 class EventBus {
   constructor() {
-    this.subscribers = {}; // Store subscribers by event type
+    // Map to hold subscribers for each event type
+    this.subscribers = new Map();
   }
 
-  // Subscribe a handler to a specific event type
-  subscribe(eventType, handler) {
-    if (!this.subscribers[eventType]) {
-      this.subscribers[eventType] = [];
+  // Method to register a subscriber callback for a specific event type
+  subscribe(eventType, callback) {
+    // Initialize the list of subscribers if the event type does not exist
+    if (!this.subscribers.has(eventType)) {
+      this.subscribers.set(eventType, []);
     }
-    this.subscribers[eventType].push(handler);
+    // Add the callback function to the subscribers list
+    this.subscribers.get(eventType).push(callback);
   }
 
-  // Publish an event to all relevant subscribers
-  publish(event) {
-    const eventType = event.eventType;
-    const handlers = this.subscribers[eventType];
-    if (handlers) {
-      handlers.forEach((handler) => handler(event));
+  // Method to publish an event of a specific type with associated data
+  publish(eventType, data) {
+    // Check if there are subscribers for this event type
+    if (this.subscribers.has(eventType)) {
+      // Broadcast the event to all registered subscribers
+      this._broadcast(eventType, data);
+    } else {
+      console.log(`No subscribers for event type: ${eventType}`);
     }
+  }
+
+  _broadcast(eventType, data) {
+    // Loop through all subscribers of the event type
+    this.subscribers.get(eventType).forEach((callback) => {
+      try {
+        // Call the subscriber's callback function with the event data
+        callback(eventType, data);
+      } catch (error) {
+        // Log error and continue with other subscribers
+        console.error(`Error broadcasting to subscriber: ${error}`);
+      }
+    });
   }
 }
+
+// Example of usage:
+
+// Define sample subscriber functions
+function thermostatListener(eventType, data) {
+  console.log(`[Thermostat] Received event '${eventType}' with data:`, data);
+}
+
+function lightingListener(eventType, data) {
+  console.log(`[Lighting] Received event '${eventType}' with data:`, data);
+}
+
+// Create an EventBus instance
+const eventBus = new EventBus();
+
+// Register subscribers
+eventBus.subscribe("TemperatureChanged", thermostatListener);
+eventBus.subscribe("MotionDetected", lightingListener);
+
+// Publish events
+eventBus.publish("TemperatureChanged", { temperature: 22 });
+eventBus.publish("MotionDetected", { location: "Living Room" });
+
+// Example of publishing an event with no subscribers
+eventBus.publish("DoorOpened", { door: "Front Door" });
+
+module.exports = EventBus;
